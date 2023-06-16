@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="slider.css">
+    <title>Document</title>
+    <script>
+        const websocket = new WebSocket("ws://192.168.1.234:8081");
+        
+        websocket.onopen = function(e) {
+            console.log('client connected');
+        };
+        websocket.onclose = function(event) {
+            alert("connection closed");
+        };
+        function send_data(msg){
+            var data_json = {
+                "degres": document.getElementById("ps").value,
+                "message": msg
+    
+            };
+            websocket.send(JSON.stringify(data_json));
+        }
+        let resultReceived = false;
+        websocket.onmessage = function(event) {
+            // alert(event.data.toString());
+            const res= event.data ;
+            const data = res.split(' ');
+      const tableBody = document.getElementById("resultBody");
+
+      // Clear the table body content
+      tableBody.innerHTML = "";
+
+      const d=data.length
+      const row = document.createElement("tr");
+      for (let i = 0; i < data.length; i++) {
+        console.log("data length",d);
+        const cell = document.createElement("td");
+        cell.textContent = data[i];
+        row.appendChild(cell);
+    }
+    tableBody.appendChild(row);
+    resultReceived = true;
+    if (resultReceived) {
+        const table = document.getElementById("resultTable");
+        table.style.display = "table";
+      }
+    };
+
+    // Add event listener to the "View Result" button
+    // const viewButton = document.getElementById("viewButton");
+    // viewButton.addEventListener("click", function() {
+    //   socket.send("viewResult");
+    // });
+        
+    </script>
+</head>
+<body>
+    <header>
+        <!-- Navbar -->
+        <nav id="navbar">
+            <div class="container">
+            <h1><a href="#">telelab</a></h1>
+            <ul>
+                <li><a href="client.html" >Home</a></li>
+                <li><a href="client.html" class="current">lab</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#contact">Contact</a></li>
+                <li><a href="#services">services</a></li>
+            </ul>
+            <!-- <i class="fa fa-burger"></i> -->
+            </div>
+        </nav>
+    </header>
+        <!-- lab  -->
+            
+    <div class="container c-lab">
+        <div class="def-plan">
+            <h1>inclined plan </h1>
+            <div class="c-def">
+                <div class="ball-box">
+                    <div class="bar">
+                        <div class="ball"></div>
+                    </div>
+                </div>
+                <div class="guide">
+                    <h3>before we get started :</h3>
+                    <ul>
+                      <li>select degre you want </li>
+                      <li>valid the degre that you already select  or you can chenge the degre value  </li>
+                      <li>press launch to start the real-time expirement  </li>
+                    </ul>
+                  </div>
+            </div> 
+            <h3 class="ready">lets get started </h3>
+            <div class="circle-container">
+                <div class="b-degre">
+                    <input type="range" class="c-rng" min="0" max="90" step="1" value="0" data-range="circular" id="ps" />
+                </div>
+            </div>
+            <div class="launch-reset">
+                <button class="cssbuttons-io-button" id="start" onclick="send_data('degres')"> valide 
+                    <div class="icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="none" d="M0 0h24v24H0z"></path><path fill="currentColor" d="M16.172 11l-5.364-5.364 1.414-1.414L20 12l-7.778 7.778-1.414-1.414L16.172 13H4v-2z"></path></svg>
+                    </div>
+                </button>
+                <button class="cssbuttons-io-button" id="start" onclick="send_data('start')"> launch
+                    <div class="icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="none" d="M0 0h24v24H0z"></path><path fill="currentColor" d="M16.172 11l-5.364-5.364 1.414-1.414L20 12l-7.778 7.778-1.414-1.414L16.172 13H4v-2z"></path></svg>
+                    </div>
+                </button>
+                <button class="cssbuttons-io-button" id="viewButton" onclick="viewResult()"> view result
+                    <div class="icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="none" d="M0 0h24v24H0z"></path><path fill="currentColor" d="M16.172 11l-5.364-5.364 1.414-1.414L20 12l-7.778 7.778-1.414-1.414L16.172 13H4v-2z"></path></svg>
+                    </div>
+                </button>
+            </div>
+            <table id="resultTable" style="display: none;">
+                <thead>
+                <tr>
+                    <th>Time 1</th>
+                    <th>Time 2</th>
+                    <th>Time 3</th>
+                    <th>Time 4</th>
+                </tr>
+                </thead>
+                <tbody id="resultBody">
+                </tbody>
+            </table>  
+        </div>
+    </div>
+    <!-- <script>
+    function viewResult() {
+      // Create an array of time values
+      var times = ["t1", "t2", "t3", "t4"];
+
+      var tableBody = document.getElementById("resultBody");
+      tableBody.innerHTML = ""; // Clear the table body
+
+      // Create a new row and cells for each time value
+      var row = document.createElement("tr");
+      for (var i = 0; i < times.length; i++) {
+        var cell = document.createElement("td");
+        cell.textContent = times[i];
+        row.appendChild(cell);
+      }
+
+      tableBody.appendChild(row); // Append the row to the table body
+    }
+  </script> -->
+    <script src="script/slider.js"></script>
+    </body>
+    </html>
+
+    
+            
