@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="slider.css">
+	<title>NodeJS WebSocket Server</title>
+  <body>
+    <script src="https://cdn.plot.ly/plotly-2.20.0.min.js" charset="utf-8"></script>
+    <script>
+        var dataX=[]
+          const websocket = new WebSocket("ws://192.168.43.220:8081");
+          websocket.onopen = function(e) {
+              console.log('client connected');
+          };
+          websocket.onclose = function(event) {
+              alert("connection closed");
+              
+          };
+          websocket.onmessage = function(event) {
+              console.log(event.data);
+              var data = JSON.parse(event.data);
+              console.log(data[0].x)
+              var dataX=[],dataY1=[],dataY2=[]; 
+              /*for(i=0; i<= Object.keys(data).length; i++){
+                        var index = i;
+                        index = parseInt(index);
+                        console.log(data[i].Ay);
+              console.log(i);
+              }*/
+              var index = 0
+              /*data.forEach(function(item) {index =>
+                        dataX[index].push=item.x;
+                        
+                      
+              });
+              console.log(dataX)*/
+              var data1=[],
+                  data2=[],
+                  data3=[];
+              for(i=0;i<Object.keys(data).length;i++){var X=data[i].x;
+                                                      data1[i]= X;
+                                                      data2[i] = data[i].Vy; 
+                                                      data3[i] = data1[i]*data2[i]; 
+          }; 
+          
+          console.log(data1)
+          console.log(data2)
+          console.log(data3)
+          var trace1 = {
+    x: data1,
+    y: data2,
+    type: 'scatter'
+  };
+
+  var trace2 = {
+    x: data1,
+    y: data3,
+    type: 'scatter'
+  };
+  var data = [trace1, trace2];
+
+  var layout = {
+    xaxis: {
+      type: 'scatter',
+      autorange: true
+    },
+    yaxis: {
+      type: 'scatter',
+      autorange: true
+    }
+  };
+
+  Plotly.newPlot('myDiv', data, layout);
+          
+          }
+          function send_data(msg){
+              var data_json = {
+                  "degres": document.getElementById("ps").value,
+                  "message": msg
+
+              };
+              websocket.send(JSON.stringify(data_json));
+          }
+          
+      </script>
+  </head>
+    <header>
+      <!-- Navbar -->
+      <nav id="navbar">
+          <div class="container">
+          <h1><a href="#">telelab</a></h1>
+          <ul>
+              <li><a href="client.html" >Home</a></li>
+              <li><a href="client.html" class="current">lab</a></li>
+              <li><a href="#about">About</a></li>
+              <li><a href="#contact">Contact</a></li>
+              <li><a href="#services">services</a></li>
+          </ul>
+          <!-- <i class="fa fa-burger"></i> -->
+          </div>
+      </nav>
+  </header>
+  <div class="container c-lab">
+    <!-- definition section  -->
+    <div class="def-plan">
+        <h1>pendulum </h1>
+          <div class="c-def">
+            <div class="pendulum-box">
+              <div class="loader">
+                <svg xml:space="preserve" viewBox="0 0 80 80" height="80px" width="80px" y="0px" x="0px" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" id="Layer_1" version="1.1" class="clock">  <image href="data:image/png;base64,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" y="0" x="0" height="80" width="80" id="image0"></image>
+                </svg>
+                <div class="stage"></div>
+                <div class="hold">
+                  <div class="ball"></div>
+                </div>
+              </div>
+            </div>
+            <div class="guide">
+              <h3>before we get started :</h3>
+              <ul>
+                <li>select degre you want </li>
+                <li>valid the degre that you already select  or you can chenge the degre value  </li>
+                <li>press launch to start the real-time experience </li>
+              </ul>
+            </div>
+          </div>
+          <h3 class="ready">lets get started </h3>
+          <div class="circle-container">
+            <div class="b-degre">
+                <input type="range" class="c-rng" min="0" max="90" step="1" value="0" data-range="circular" id="ps" />
+            </div>
+          </div>
+          
+          <!-- <button id="start" onclick="send_data('start');">start</button> -->
+          <div class="launch-reset">
+           
+            <button class="cssbuttons-io-button" id="start" onclick="send_data('degres')"> valide 
+                <div class="icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="none" d="M0 0h24v24H0z"></path><path fill="currentColor" d="M16.172 11l-5.364-5.364 1.414-1.414L20 12l-7.778 7.778-1.414-1.414L16.172 13H4v-2z"></path></svg>
+                </div>
+            </button>
+            
+            
+            <button class="cssbuttons-io-button" id="start" onclick="send_data('start')"> launch
+              <div class="icon">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="none" d="M0 0h24v24H0z"></path><path fill="currentColor" d="M16.172 11l-5.364-5.364 1.414-1.414L20 12l-7.778 7.778-1.414-1.414L16.172 13H4v-2z"></path></svg>
+              </div>
+            </button>
+            <button class="cssbuttons-io-button" id="start" onclick="send_data('reset')"> reset 
+              <div class="icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="none" d="M0 0h24v24H0z"></path><path fill="currentColor" d="M16.172 11l-5.364-5.364 1.414-1.414L20 12l-7.778 7.778-1.414-1.414L16.172 13H4v-2z"></path></svg>
+              </div>
+          </button>
+            <!-- <button class="button" type="button" onclick="send_data('Reset') ">
+                <span class="button__text">Reset</span>
+                <span class="button__icon"><svg xmlns="http://www.w3.org/2000/svg" width="48" viewBox="0 0 48 48" height="48" class="svg"><path d="M35.3 12.7c-2.89-2.9-6.88-4.7-11.3-4.7-8.84 0-15.98 7.16-15.98 16s7.14 16 15.98 16c7.45 0 13.69-5.1 15.46-12h-4.16c-1.65 4.66-6.07 8-11.3 8-6.63 0-12-5.37-12-12s5.37-12 12-12c3.31 0 6.28 1.38 8.45 3.55l-6.45 6.45h14v-14l-4.7 4.7z"></path><path fill="none" d="M0 0h48v48h-48z"></path></svg></span>
+            </button> -->
+        </div>
+            <!-- <div class="def-text">
+                <p><span>categories</span>: froces & motions,physics </p> <br>
+                <p><span>level</span>:university,high school,middle school</p><br>
+                <p><span>objectif</span>:newton second law </p>
+
+            </div> -->
+            <!-- <div class="def-button">
+                <button class="button2 read">
+                    <a href="#readMore">read more</a>
+                </button>
+                <button  class="button2 test">
+                    <a href="#experience">experience</a>
+                </button>
+            </div> -->
+          </div> 
+        </div>
+       
+    <!-- read more section  -->
+    <!-- experience section  -->
+      <script src="slider.js"></script>
+
+</body>
+</html>
